@@ -1,21 +1,24 @@
 #!/bin/bash
 
+# Script for dumping mysql tables into separate files
+#
 # SYNTAX:
-# mysql-dumper db_name user_name user_password host /dump/dir [excluded_table_one,excluded_table_two,excluded_table_n]
+# mysql-dumper db_name user_name user_password host /dump/dir [count_of_expiration_days] [excluded_table_one,excluded_table_two,excluded_table_n]
 #
 # USAGE:
 # mv mysql-dumper.sh /usr/bin/mysql-dumper
 # chmod 777 /usr/bin/mysql-dumper
-# mysql-dumper myDB user_account '123abc' '127.0.0.1' /var/backup accounting_logs,accounting_history
+# mysql-dumper myDB user_account '123abc' '127.0.0.1' /var/backup 64 accounting_logs,accounting_history
 
 DB_NAME=$1
 DB_USER=$2
 DB_PASSWORD=$3
 DB_HOST=$4
 DIR=$5
-IGNORED_TABLES=$6
+EXPIRATION_DAYS=$6
+IGNORED_TABLES=$7
 
-BACKUP_PATH=${DIR}/$(date +"%d-%m-%Y")/${DB_NAME}
+BACKUP_PATH=${DIR}/${DB_NAME}/$(date +"%d-%m-%Y")
 
 mkdir -p ${BACKUP_PATH}
 
@@ -50,3 +53,7 @@ do
    mysqldump -h ${DB_HOST} -u ${DB_USER} -p${DB_PASSWORD} ${DB_NAME} ${t} | gzip > ${BACKUP_PATH}/${t}.sql.gz
    echo "Done"
 done
+
+if [ ! -z "${IGNORED_TABLES}" ]; then
+    find ${DIR}/${DB_NAME}/* -type d -ctime +${EXPIRATION_DAYS} | xargs rm -rf
+fi
