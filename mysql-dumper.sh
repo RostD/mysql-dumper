@@ -50,7 +50,7 @@ SQL="SELECT TABLE_NAME FROM information_schema.tables WHERE TABLE_SCHEMA='${DB_N
 for t in $(mysql -u"${DB_USER}" -p"${DB_PASSWORD}" -h"${DB_HOST}" -e"${SQL}" | grep -v TABLE_NAME)
 do
    echo "Exporting $t table..."
-   mysqldump -h ${DB_HOST} -u ${DB_USER} -p${DB_PASSWORD} ${DB_NAME} ${t} | gzip > ${BACKUP_PATH}/${t}.sql.gz
+   mysqldump --single-transaction=true --lock-tables=false -h ${DB_HOST} -u ${DB_USER} -p${DB_PASSWORD} ${DB_NAME} ${t} | gzip > ${BACKUP_PATH}/${t}.sql.gz
    echo "Done"
 done
 
