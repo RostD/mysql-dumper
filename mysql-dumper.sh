@@ -55,5 +55,5 @@ do
 done
 
 if [ ! -z "${EXPIRATION_DAYS}" ]; then
-    find ${DIR}/${DB_NAME}/* -type d -ctime +${EXPIRATION_DAYS} | xargs rm -rf
+    find ${DIR}/${DB_NAME}/* -type d -mtime ${EXPIRATION_DAYS} | xargs rm -rf
 fi
