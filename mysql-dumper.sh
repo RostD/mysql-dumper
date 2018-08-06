@@ -54,6 +54,6 @@ do
    echo "Done"
 done
 
-if [ ! -z "${IGNORED_TABLES}" ]; then
+if [ ! -z "${EXPIRATION_DAYS}" ]; then
     find ${DIR}/${DB_NAME}/* -type d -ctime +${EXPIRATION_DAYS} | xargs rm -rf
 fi
